@@ -18,14 +18,6 @@ export default function Register({ onRegister, isLoggedIn }) {
     onRegister(email, password);
   }
 
-  const navigate = useNavigate();
-
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/');
-    }
-  }, [isLoggedIn, navigate]);
-
   return (
     <form
       onSubmit={handleSubmit}

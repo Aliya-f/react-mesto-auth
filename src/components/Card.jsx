@@ -51,7 +51,7 @@ export default function Card({
             type="button"
             onClick={handleLikeClick}
           />
-          <p className="places__like-quantity">0</p>
+          <p className="places__like-quantity">{likes.length}</p>
         </div>
         {isOwn && (
           <button

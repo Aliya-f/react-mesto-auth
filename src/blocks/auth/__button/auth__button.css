@@ -1,4 +1,5 @@
 .auth__button {
+  font-family: "Inter", Arial, sans-serif;
   background-color: #fff;
   border: none;
   padding: 0;
@@ -8,6 +9,7 @@
   min-height: 50px;
   font-size: 18px;
   line-height: 21.78px;
+  font-weight: 400;
   text-align: center;
   opacity: 1;
 }

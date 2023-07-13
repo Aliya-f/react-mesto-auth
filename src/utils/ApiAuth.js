@@ -15,11 +15,12 @@ class ApiAuth {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-    "Authorization" : `Bearer ${token}`}
+        "Authorization" : `Bearer ${token}`
+      }
     }).then((res) => this._checkResponse(res));
   }
   // регистрация
-  signup({ email, password }) {
+  signUp({ email, password }) {
     return fetch(`${this.baseUrl}/signup`, {
       method: 'POST',
       headers: {
@@ -31,7 +32,7 @@ class ApiAuth {
     }).then((res) => this._checkResponse(res));
   }
   // вход
-  signin({ email, password }) {
+  signIn({ email, password }) {
     return fetch(`${this.baseUrl}/signin`, {
       method: 'POST',
       headers: {

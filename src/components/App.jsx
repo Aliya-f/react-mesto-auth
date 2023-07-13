@@ -15,8 +15,6 @@ import Register from "./Register.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import Login from "./Login.jsx";
 import InfoTooltip from "./InfoTooltip.jsx";
-//import success from "../images/success.svg";
-//import notSuccess from "../images/not-success.svg";
 
 function App() {
 // попап аватарки
@@ -32,17 +30,14 @@ function App() {
   // массив карточек
   const [cards, setCards] = React.useState([]);
   // 12: попап успешной регистрации
-  const [isInfoTolltipSuccess, setIsInfoTooltipSuccess] = React.useState(false);
+  const [isInfoTooltipSuccess, setIsInfoTooltipSuccess] = React.useState(false);
   // информация о входе
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [email, setEmail] = React.useState('');
-  //const [message, setMessage] = React.useState({ path: '', text: '' });
   // попап модального окна,который информирует пользователя об успешной (или не очень) регистрации
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   // хук
   const navigate = useNavigate();
-  // меню хедера
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   // отрисовка массива карточек и инфо пользователя
   React.useEffect(() => {
@@ -103,24 +98,6 @@ function App() {
       .catch((err) => console.log(err));
   }
 
-  // React.useEffect(() => {
-  //   api
-  //     .getInitialCards()
-  //     .then((res) => {
-  //       setCards([...res]);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
-
-  // React.useEffect(() => {
-  //   api
-  //     .getUserInfo()
-  //     .then((data) => {
-  //       setCurrentUser(data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
-
   function handleUpdateUser(data) {
     api
       .setUserInfo(data)
@@ -151,24 +128,25 @@ function App() {
       .catch((err) => console.log(err));
   }
   // 12: регистрация
-  function heandleRegister(email, password) {
+  function handleRegister(email, password) {
     apiAuth
-      .signup({ email, password })
+      .signUp({ email, password })
       .then((data) => {
         if (data) {
           setIsInfoTooltipSuccess(true); // успешный вход
-          navigate("/sing-in")
+          navigate("/sign-in")
         }
       })
       .catch((err) => {
         console.log(err)
+        setIsInfoTooltipSuccess(false)
       })
       .finally(() => setIsInfoTooltipOpen(true));
   }
   // аутентификация
-  function heandleLogin(email, password) {
+  function handleLogin(email, password) {
     apiAuth
-      .signin({ email, password })
+      .signIn({ email, password })
       .then((data) => {
         if (data.token) {
           setEmail(email);
@@ -178,17 +156,18 @@ function App() {
         }
       })
       .catch((err) => {
-      //  setIsInfoTooltipSuccess(false); // fail
+        setIsInfoTooltipSuccess(false); // fail
         setIsInfoTooltipOpen(true); // в любом случае открываем попап
         console.log(err);
       });
   }
   // проверка токена
   React.useEffect(() => {
-      if (localStorage.getItem('JWT'))
+    const token = localStorage.getItem('JWT');
+      if (token)
       {
         apiAuth
-        .checkToken(localStorage.getItem('JWT'))
+        .checkToken(token)
         .then((data) => {
           if (data) {
             setIsLoggedIn(true); // вошли
@@ -198,21 +177,20 @@ function App() {
         })
         .catch((err) => console.log(err));
     }
-  }, [navigate]);
+  }, []);
   // удаление токена
   function onSignOut() {
     localStorage.removeItem('JWT');
     setIsLoggedIn(false);
     setEmail("");
-    navigate("/sing-in");
-    setIsMobileMenuOpen(false);
+    navigate("/sign-in");
   }
-  // хендлер меню 
-  function handleClickOpenMobileMenu() {
+
+  React.useEffect(() => {
     if (isLoggedIn) {
-      setIsMobileMenuOpen(!isMobileMenuOpen)
+      navigate('/');
     }
-  }
+  }, [isLoggedIn, navigate]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -221,8 +199,6 @@ function App() {
           isLoggedIn={isLoggedIn}
           onSignOut={onSignOut}
           email={email} 
-          isMobileMenuOpen={isMobileMenuOpen}
-          handleClickOpenMobileMenu={handleClickOpenMobileMenu}
         />
         <Routes>
           <Route
@@ -242,21 +218,10 @@ function App() {
             cards={cards}
             />}
           />
-          <Route path="sign-up" element={<Register onRegister={heandleRegister} isLoggedIn={isLoggedIn} />} />
-          <Route path="/sign-in" element={<Login onAuth={heandleLogin} isLoggedIn={isLoggedIn} />} />
-          <Route element={isLoggedIn ? <Navigate to="/" replace /> : <Navigate to="/sign-in" replace />} />
+          <Route path="sign-up" element={<Register onRegister={handleRegister} isLoggedIn={isLoggedIn} />} />
+          <Route path="/sign-in" element={<Login onAuth={handleLogin} isLoggedIn={isLoggedIn} />} />
+          <Route path="*" element={isLoggedIn ? <Navigate to="/" replace /> : <Navigate to="/sign-in" replace />} />
         </Routes>
-
-          {/* // <Main
-          // onEditAvatar={handleEditAvatarClick}
-          // onEditProfile={handleEditProfileClick}
-          // onAddPlace={handleAddPlaceClick}
-          // onCardClick={handleCardClick}
-          // onCardDelete={handleCardDelete}
-          // onCardLike={handleCardLike}
-          // cards={cards}
-          // /> */}
-     
         <Footer />
         {/* POPUP: Сменить аватар */}
         <EditAvatarPopup
@@ -292,7 +257,7 @@ function App() {
           name={"success"}
           isOpen={isInfoTooltipOpen}
           onClose={closeAllPopups}
-          isSuccess={isInfoTolltipSuccess}
+          isSuccess={isInfoTooltipSuccess}
         />
       </div>
     </CurrentUserContext.Provider>

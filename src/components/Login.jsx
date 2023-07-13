@@ -18,14 +18,6 @@ export default function Login({ onAuth, isLoggedIn }) {
     onAuth(email, password);
   }
 
-  const navigate = useNavigate();
-
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/');
-    }
-  }, [isLoggedIn, navigate]);
-
   return (
     <form onSubmit={handleSubmit} className="auth__form" noValidate>
       <h2 className="auth__title">Вход</h2>

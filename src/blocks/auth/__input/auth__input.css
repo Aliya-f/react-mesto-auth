@@ -1,4 +1,8 @@
 .auth__input {
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 16.94px;
+  font-weight: 400;
   color: #ccc;
   background-color: transparent;
   border: none;
